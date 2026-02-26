@@ -1,41 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import './App.css';
-import DeploymentForm from './components/DeploymentForm';
-import Dashboard from './components/Dashboard';
+import { ThemeProvider } from './context/ThemeContext';
+import Navbar from './components/Navbar';
+import Dashboard from './pages/Dashboard';
+import { Toast } from './components/Toast';
+
+let _tid = 0;
 
 function App() {
-    const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [activePage, setActivePage] = useState('Dashboard');
+    const [toasts, setToasts] = useState([]);
 
-    const handleDeploymentSuccess = () => {
-        setRefreshTrigger(prev => prev + 1);
+    const addToast = useCallback((type, message) => {
+        const id = ++_tid;
+        setToasts(p => [...p, { id, type, message }]);
+        setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 5000);
+    }, []);
+
+    const dismissToast = useCallback((id) => setToasts(p => p.filter(t => t.id !== id)), []);
+
+    const renderPage = () => {
+        if (activePage === 'Dashboard') return <Dashboard onToast={addToast} />;
+        return (
+            <div style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                minHeight: '60vh', gap: 12,
+            }}>
+                <div style={{
+                    width: 64, height: 64, borderRadius: 18, background: 'linear-gradient(135deg,#6366f1,#8b5cf6)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28,
+                    boxShadow: '0 0 28px rgba(99,102,241,0.4)',
+                }}>
+                    {activePage === 'Deployments' ? '🚀' : activePage === 'Clusters' ? '⚙️' : activePage === 'Settings' ? '🔧' : '💬'}
+                </div>
+                <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{activePage}</h2>
+                <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>This section is coming soon.</p>
+            </div>
+        );
     };
 
     return (
-        <div className="app-container">
-            <header className="header">
-                <h1>CloudControl Plane <span className="badge-demo">Beta</span></h1>
-                <p className="subtitle">Unified Interface for Multi-Cloud Container Orchestration</p>
-            </header>
-
-            <main className="main-content">
-                <div className="grid">
-                    <section className="section">
-                        <DeploymentForm onDeploymentSuccess={handleDeploymentSuccess} />
-                    </section>
-
-                    <section className="section full-width">
-                        <Dashboard refreshTrigger={refreshTrigger} />
-                    </section>
-                </div>
-            </main>
-
-            <footer className="footer">
-                <p>&copy; 2026 Cloud Abstraction Platform. Architected for Portability.</p>
-                <div className="status-indicator">
-                    <span className="dot pulse"></span> API Connected
-                </div>
-            </footer>
-        </div>
+        <ThemeProvider>
+            <div className="app-shell">
+                <Navbar activePage={activePage} onPageChange={setActivePage} />
+                <main style={{ flex: 1 }}>{renderPage()}</main>
+                <footer className="app-footer">
+                    <span>© 2026 CloudControl Plane — Architected for Portability</span>
+                    <span className="footer-status">
+                        <span className="status-dot" />
+                        System Operational
+                    </span>
+                </footer>
+                <Toast toasts={toasts} onDismiss={dismissToast} />
+            </div>
+        </ThemeProvider>
     );
 }
 

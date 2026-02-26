@@ -3,11 +3,16 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
+        "@tailwindcss/forms": "^0.5.11",
+        "autoprefixer": "^10.4.27",
         "axios": "^1.6.7",
+        "framer-motion": "^12.34.3",
+        "lucide-react": "^0.321.0",
+        "postcss": "^8.5.6",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-scripts": "5.0.1",
-        "lucide-react": "^0.321.0"
+        "tailwindcss": "^3.4.1"
     },
     "scripts": {
         "start": "react-scripts start",
