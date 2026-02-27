@@ -4,6 +4,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import { Toast } from './components/Toast';
+import MigrationEngine from './pages/MigrationEngine';
 
 let _tid = 0;
 
@@ -21,6 +22,7 @@ function App() {
 
     const renderPage = () => {
         if (activePage === 'Dashboard') return <Dashboard onToast={addToast} />;
+        if (activePage === 'Migration') return <MigrationEngine />;
         return (
             <div style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',

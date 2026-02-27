@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import ThemeToggle from './ThemeToggle';
 
-const TABS = ['Dashboard', 'Deployments', 'Clusters', 'Settings', 'Support'];
+const TABS = ['Dashboard', 'Migration','Deployments', 'Clusters', 'Settings', 'Support'];
 
 const CloudIcon = () => (
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
