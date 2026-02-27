@@ -48,89 +48,77 @@ const DeploymentForm = ({ onDeploymentSuccess }) => {
     };
 
     return (
-        <div className="glass-card">
-            <div className="card-header">
-                <div className="card-header-icon" style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', boxShadow: '0 4px 14px rgba(99,102,241,0.35)' }}>
-                    <RocketIcon />
+        <form className="form-body" onSubmit={handleSubmit} style={{ padding: 0, border: 'none', background: 'none' }}>
+            {/* Provider */}
+            <div>
+                <label className="form-label">Cloud Provider</label>
+                <div className="select-wrap">
+                    <select
+                        className="form-control"
+                        value={form.provider}
+                        onChange={e => setProvider(e.target.value)}
+                    >
+                        <option value="aws">Amazon Web Services (AWS)</option>
+                        <option value="gcp">Google Cloud Platform (GCP)</option>
+                        <option value="azure" disabled>Microsoft Azure — Coming Soon</option>
+                    </select>
                 </div>
-                <div>
-                    <p className="card-header-title">Launch Deployment</p>
-                    <p className="card-header-sub">Deploy containers to any cloud provider</p>
+                <div className="provider-chips">
+                    <button type="button" className={`provider-chip chip-aws${form.provider === 'aws' ? ' active' : ''}`} onClick={() => setProvider('aws')}>AWS</button>
+                    <button type="button" className={`provider-chip chip-gcp${form.provider === 'gcp' ? ' active' : ''}`} onClick={() => setProvider('gcp')}>GCP</button>
                 </div>
             </div>
 
-            <form className="form-body" onSubmit={handleSubmit}>
-                {/* Provider */}
-                <div>
-                    <label className="form-label">Cloud Provider</label>
-                    <div className="select-wrap">
-                        <select
-                            className="form-control"
-                            value={form.provider}
-                            onChange={e => setProvider(e.target.value)}
-                        >
-                            <option value="aws">Amazon Web Services (AWS)</option>
-                            <option value="gcp">Google Cloud Platform (GCP)</option>
-                            <option value="azure" disabled>Microsoft Azure — Coming Soon</option>
-                        </select>
-                    </div>
-                    <div className="provider-chips">
-                        <button type="button" className={`provider-chip chip-aws${form.provider === 'aws' ? ' active' : ''}`} onClick={() => setProvider('aws')}>AWS</button>
-                        <button type="button" className={`provider-chip chip-gcp${form.provider === 'gcp' ? ' active' : ''}`} onClick={() => setProvider('gcp')}>GCP</button>
-                    </div>
+            {/* Image */}
+            <div>
+                <label className="form-label">Container Image</label>
+                <input
+                    type="text"
+                    className="form-control"
+                    value={form.image}
+                    onChange={e => setForm(f => ({ ...f, image: e.target.value }))}
+                    placeholder="e.g. nginx:latest"
+                    required
+                    style={{ cursor: 'text' }}
+                />
+                <div className="quick-picks">
+                    {IMAGES.map(img => (
+                        <button type="button" key={img} className="quick-pick" onClick={() => setForm(f => ({ ...f, image: img }))}>
+                            {img}
+                        </button>
+                    ))}
                 </div>
+            </div>
 
-                {/* Image */}
-                <div>
-                    <label className="form-label">Container Image</label>
-                    <input
-                        type="text"
+            {/* Region */}
+            <div>
+                <label className="form-label">Region</label>
+                <div className="select-wrap">
+                    <select
                         className="form-control"
-                        value={form.image}
-                        onChange={e => setForm(f => ({ ...f, image: e.target.value }))}
-                        placeholder="e.g. nginx:latest"
-                        required
-                        style={{ cursor: 'text' }}
-                    />
-                    <div className="quick-picks">
-                        {IMAGES.map(img => (
-                            <button type="button" key={img} className="quick-pick" onClick={() => setForm(f => ({ ...f, image: img }))}>
-                                {img}
-                            </button>
-                        ))}
-                    </div>
+                        value={form.region}
+                        onChange={e => setForm(f => ({ ...f, region: e.target.value }))}
+                    >
+                        {regions.map(r => <option key={r} value={r}>{r}</option>)}
+                    </select>
                 </div>
+            </div>
 
-                {/* Region */}
-                <div>
-                    <label className="form-label">Region</label>
-                    <div className="select-wrap">
-                        <select
-                            className="form-control"
-                            value={form.region}
-                            onChange={e => setForm(f => ({ ...f, region: e.target.value }))}
-                        >
-                            {regions.map(r => <option key={r} value={r}>{r}</option>)}
-                        </select>
-                    </div>
-                </div>
-
-                {/* Submit */}
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className={`deploy-btn ${success ? 'success-btn' : ''}`}
-                >
-                    {loading ? (
-                        <><div className="btn-spinner" /> Deploying...</>
-                    ) : success ? (
-                        <><CheckIcon /> Deployed Successfully!</>
-                    ) : (
-                        <><RocketIcon /> Deploy Container</>
-                    )}
-                </button>
-            </form>
-        </div>
+            {/* Submit */}
+            <button
+                type="submit"
+                disabled={loading}
+                className={`deploy-btn ${success ? 'success-btn' : ''}`}
+            >
+                {loading ? (
+                    <><div className="btn-spinner" /> Deploying...</>
+                ) : success ? (
+                    <><CheckIcon /> Deployed Successfully!</>
+                ) : (
+                    <><RocketIcon /> Deploy Container</>
+                )}
+            </button>
+        </form>
     );
 };
 

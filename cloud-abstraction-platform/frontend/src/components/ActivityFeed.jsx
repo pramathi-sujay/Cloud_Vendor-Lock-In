@@ -14,7 +14,7 @@ const ICONS = {
         svg: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3" /></svg>
     },
     error: {
-        bg: 'rgba(185,28,28,0.12)', border: 'rgba(239,68,68,0.35)', color: '#f87171',
+        bg: 'rgba(185,28,28,0.12)', border: 'rgba(239,68,68,0.35)', color: 'var(--status-red)',
         svg: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
     },
     info: {
@@ -68,8 +68,10 @@ const ActivityFeed = ({ activities }) => {
                                 {ic.svg}
                             </div>
                             <div style={{ flex: 1, minWidth: 0 }}>
-                                <p className="feed-title">{item.title}</p>
-                                <p className="feed-desc">{item.description}</p>
+                                <p className="feed-title">{item.title || item.message || 'System Event'}</p>
+                                <p className="feed-desc" style={{ opacity: (item.description || item.message) ? 1 : 0 }}>
+                                    {item.description || item.message || '...'}
+                                </p>
                             </div>
                             <span className="feed-time">{timeAgo(item.timestamp)}</span>
                         </div>
