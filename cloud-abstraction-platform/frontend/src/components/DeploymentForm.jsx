@@ -21,7 +21,14 @@ const CheckIcon = () => (
 );
 
 const DeploymentForm = ({ onDeploymentSuccess }) => {
-    const [form, setForm] = useState({ provider: 'aws', image: 'nginx:latest', region: 'us-east-1' });
+    const [deploymentMode, setDeploymentMode] = useState('image');
+    const [form, setForm] = useState({
+        provider: 'aws',
+        image: 'nginx:latest',
+        region: 'us-east-1',
+        githubUrl: '',
+        branch: 'main',
+    });
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
@@ -34,15 +41,19 @@ const DeploymentForm = ({ onDeploymentSuccess }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (deploymentMode === 'image' && !form.image?.trim()) return;
+        if (deploymentMode === 'github' && !form.githubUrl?.trim()) return;
         setLoading(true);
         setSuccess(false);
+        const imageValue = deploymentMode === 'image' ? form.image : form.githubUrl;
+        const submitForm = { ...form, image: imageValue };
         try {
-            const result = await api.deploy(form.provider, form.image, form.region);
-            if (onDeploymentSuccess) onDeploymentSuccess(result, form, null);
+            const result = await api.deploy(form.provider, imageValue, form.region);
+            if (onDeploymentSuccess) onDeploymentSuccess(result, submitForm, null);
             setSuccess(true);
             setTimeout(() => setSuccess(false), 3000);
         } catch (err) {
-            if (onDeploymentSuccess) onDeploymentSuccess(null, form, err);
+            if (onDeploymentSuccess) onDeploymentSuccess(null, submitForm, err);
         } finally {
             setLoading(false);
         }
@@ -71,6 +82,29 @@ const DeploymentForm = ({ onDeploymentSuccess }) => {
                 </div>
             </div>
 
+            {/* Deployment Source toggle */}
+            <div>
+                <label className="form-label">Deployment Source</label>
+                <div className="deployment-source-toggle">
+                    <button
+                        type="button"
+                        className={`deployment-source-pill${deploymentMode === 'image' ? ' active' : ''}`}
+                        onClick={() => setDeploymentMode('image')}
+                    >
+                        Use Container Image
+                    </button>
+                    <button
+                        type="button"
+                        className={`deployment-source-pill${deploymentMode === 'github' ? ' active' : ''}`}
+                        onClick={() => setDeploymentMode('github')}
+                    >
+                        Deploy from GitHub Repository
+                    </button>
+                </div>
+            </div>
+
+            {deploymentMode === 'image' && (
+            <>
             {/* Image */}
             <div>
                 <label className="form-label">Container Image</label>
@@ -80,7 +114,7 @@ const DeploymentForm = ({ onDeploymentSuccess }) => {
                     value={form.image}
                     onChange={e => setForm(f => ({ ...f, image: e.target.value }))}
                     placeholder="e.g. nginx:latest"
-                    required
+                    required={deploymentMode === 'image'}
                     style={{ cursor: 'text' }}
                 />
                 <div className="quick-picks">
@@ -91,6 +125,36 @@ const DeploymentForm = ({ onDeploymentSuccess }) => {
                     ))}
                 </div>
             </div>
+            </>
+            )}
+
+            {deploymentMode === 'github' && (
+            <>
+            <div>
+                <label className="form-label">GitHub Repository URL</label>
+                <input
+                    type="url"
+                    className="form-control"
+                    value={form.githubUrl}
+                    onChange={e => setForm(f => ({ ...f, githubUrl: e.target.value }))}
+                    placeholder="https://github.com/owner/repo"
+                    required={deploymentMode === 'github'}
+                    style={{ cursor: 'text' }}
+                />
+            </div>
+            <div>
+                <label className="form-label">Branch (optional)</label>
+                <input
+                    type="text"
+                    className="form-control"
+                    value={form.branch}
+                    onChange={e => setForm(f => ({ ...f, branch: e.target.value }))}
+                    placeholder="main"
+                    style={{ cursor: 'text' }}
+                />
+            </div>
+            </>
+            )}
 
             {/* Region */}
             <div>

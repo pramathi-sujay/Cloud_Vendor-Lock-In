@@ -11,6 +11,14 @@ const MIGRATION_STEPS = [
   { id: 5, label: 'Execute', desc: 'Provisioning & Cutover' }
 ];
 
+const CLOUD_OPTIONS = ['GCP', 'AWS', 'Azure'];
+
+const CLOUD_STYLES = {
+  GCP:   { bg: '#FF9900', shadow: 'rgba(255,153,0,0.3)' },
+  AWS:   { bg: '#4285F4', shadow: 'rgba(66,133,244,0.3)' },
+  Azure: { bg: '#22c55e', shadow: 'rgba(34,197,94,0.3)' },
+};
+
 const LOG_MESSAGES = [
   '[info] Initializing Migration Engine v4.2...',
   '[info] Connecting to GCP Project ID: infra-prod-431...',
@@ -35,6 +43,9 @@ const LOG_MESSAGES = [
 
 const MigrationEngine = () => {
   const { addMigration } = useAppState();
+  const [cloudSelectionComplete, setCloudSelectionComplete] = useState(false);
+  const [sourceCloud, setSourceCloud] = useState('');
+  const [targetCloud, setTargetCloud] = useState('');
   const [currentStep, setCurrentStep] = useState(1);
   const [githubUrl, setGithubUrl] = useState('');
   const [logs, setLogs] = useState([]);
@@ -49,6 +60,31 @@ const MigrationEngine = () => {
   }, [logs]);
 
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 5));
+
+  const handleSourceChange = (e) => {
+    const next = e.target.value;
+    if (next && next === targetCloud) setTargetCloud(sourceCloud || CLOUD_OPTIONS.find(c => c !== next));
+    setSourceCloud(next);
+  };
+
+  const handleTargetChange = (e) => {
+    const next = e.target.value;
+    if (next && next === sourceCloud) setSourceCloud(targetCloud || CLOUD_OPTIONS.find(c => c !== next));
+    setTargetCloud(next);
+  };
+
+  const canStartMapping = sourceCloud && targetCloud && sourceCloud !== targetCloud;
+
+  const handleStartMapping = () => {
+    if (!canStartMapping) return;
+    setCloudSelectionComplete(true);
+  };
+
+  const handleChangePath = () => {
+    setCloudSelectionComplete(false);
+    setSourceCloud('');
+    setTargetCloud('');
+  };
 
   const runMigration = () => {
     setIsExecuting(true);
@@ -66,8 +102,8 @@ const MigrationEngine = () => {
         setShowSuccessPopup(true);
         addMigration({
           id: `mig-${Date.now().toString(36)}`,
-          source: 'GCP',
-          target: 'AWS',
+          source: sourceCloud,
+          target: targetCloud,
           status: 'completed',
           date: new Date().toISOString().split('T')[0],
           services: ['Cloud Storage', 'Cloud Run'],
@@ -88,30 +124,114 @@ const MigrationEngine = () => {
 
         {/* ── Left Column: Config & Stepper ────────────────────────── */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-          {/* Migration Path Card */}
-          <div className="glass-card-nohover" style={{ position: 'relative', overflow: 'hidden' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 160, gap: 40, position: 'relative' }}>
-              <div style={{ textAlign: 'center', zIndex: 1 }}>
-                <div style={{ width: 60, height: 60, borderRadius: '50%', background: '#4285F4', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', boxShadow: '0 0 20px rgba(66,133,244,0.3)' }}>
-                  <span style={{ fontWeight: 800, color: 'white' }}>GCP</span>
+          {/* Migration Path Card: selection panel OR diagram */}
+          <div className="glass-card-nohover migration-path-card" style={{ position: 'relative', overflow: 'hidden', minHeight: 160 }}>
+            {!cloudSelectionComplete ? (
+              <div className="migration-selection-panel animate-fade-in" style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>Select Migration Path</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%', maxWidth: 280 }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 6 }}>Source Cloud</label>
+                    <select
+                      className="migration-cloud-select"
+                      value={sourceCloud}
+                      onChange={handleSourceChange}
+                      aria-label="Source cloud"
+                      style={{ width: '100%' }}
+                    >
+                      <option value="">Select source...</option>
+                      {CLOUD_OPTIONS.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 6 }}>Target Cloud</label>
+                    <select
+                      className="migration-cloud-select"
+                      value={targetCloud}
+                      onChange={handleTargetChange}
+                      aria-label="Target cloud"
+                      style={{ width: '100%' }}
+                    >
+                      <option value="">Select target...</option>
+                      {CLOUD_OPTIONS.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)' }}>SOURCE</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>asia-east1</div>
+                <button
+                  type="button"
+                  className="btn-primary"
+                  style={{ padding: '10px 24px', opacity: canStartMapping ? 1 : 0.6, cursor: canStartMapping ? 'pointer' : 'not-allowed' }}
+                  disabled={!canStartMapping}
+                  onClick={handleStartMapping}
+                >
+                  Start Migration Mapping
+                </button>
               </div>
+            ) : (
+              <div className="migration-diagram-wrap" style={{ display: 'flex', flexDirection: 'column', gap: 0, minHeight: 160 }}>
+                <div className="migration-diagram-panel animate-fade-in" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, minHeight: 140, gap: 40, position: 'relative' }}>
+                  <div style={{ textAlign: 'center', zIndex: 1 }}>
+                    <div
+                      style={{
+                        width: 60,
+                        height: 60,
+                        borderRadius: '50%',
+                        background: sourceCloud ? (CLOUD_STYLES[sourceCloud]?.bg ?? '#4285F4') : 'var(--bg-card)',
+                        boxShadow: sourceCloud ? `0 0 20px ${CLOUD_STYLES[sourceCloud]?.shadow}` : 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        margin: '0 auto 12px',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                      }}
+                    >
+                      <span style={{ fontWeight: 800, color: 'white', fontSize: 14 }}>{sourceCloud || '—'}</span>
+                    </div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)' }}>SOURCE</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>asia-east1</div>
+                  </div>
 
-              <div style={{ position: 'relative', width: 100 }}>
-                <div style={{ height: 2, background: 'var(--border)', width: '100%' }} />
-                <div className={`migration-travel-dot ${currentStep === 5 && isExecuting ? 'moving' : ''}`} />
-              </div>
+                  <div style={{ position: 'relative', width: 100 }}>
+                    <div style={{ height: 2, background: 'var(--border)', width: '100%' }} />
+                    <div className={`migration-travel-dot ${currentStep === 5 && isExecuting ? 'moving' : ''}`} />
+                  </div>
 
-              <div style={{ textAlign: 'center', zIndex: 1 }}>
-                <div style={{ width: 60, height: 60, borderRadius: '50%', background: '#FF9900', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', boxShadow: '0 0 20px rgba(255,153,0,0.3)' }}>
-                  <span style={{ fontWeight: 800, color: 'white' }}>AWS</span>
+                  <div style={{ textAlign: 'center', zIndex: 1 }}>
+                    <div
+                      style={{
+                        width: 60,
+                        height: 60,
+                        borderRadius: '50%',
+                        background: targetCloud ? (CLOUD_STYLES[targetCloud]?.bg ?? '#FF9900') : 'var(--bg-card)',
+                        boxShadow: targetCloud ? `0 0 20px ${CLOUD_STYLES[targetCloud]?.shadow}` : 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        margin: '0 auto 12px',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                      }}
+                    >
+                      <span style={{ fontWeight: 800, color: 'white', fontSize: 14 }}>{targetCloud || '—'}</span>
+                    </div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)' }}>TARGET</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>us-east-1</div>
+                  </div>
                 </div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)' }}>TARGET</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>us-east-1</div>
+                <div style={{ padding: '0 20px 16px', display: 'flex', justifyContent: 'flex-end' }}>
+                  <button
+                    type="button"
+                    className="migration-change-path-btn"
+                    onClick={handleChangePath}
+                  >
+                    Change Migration Path
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Stepper Card */}
@@ -152,7 +272,7 @@ const MigrationEngine = () => {
                   type="text"
                   placeholder="Enter GitHub repository URL..."
                   className="search-input"
-                  style={{ width: '100%', height: 44, paddingLeft: 16, background: 'rgba(255,255,255,0.03)' }}
+                  style={{ width: '100%', height: 44, paddingLeft: 16, background: 'rgba(255,255,255,0.03)', color: '#ffffff' }}
                   value={githubUrl}
                   onChange={(e) => setGithubUrl(e.target.value)}
                 />
@@ -358,7 +478,7 @@ async function uploadFile() {
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--status-green)' }}>Migration Complete: CustomerPortal</div>
-                      <div style={{ fontSize: 11.5, color: 'var(--text-secondary)' }}>Target: AWS us-east-1 · Data: 3.2TB · Downtime: 0ms</div>
+                      <div style={{ fontSize: 11.5, color: 'var(--text-secondary)' }}>Target: {targetCloud} us-east-1 · Data: 3.2TB · Downtime: 0ms</div>
                     </div>
                     <StatusBadge status="running" pulse />
                   </div>
@@ -389,7 +509,7 @@ async function uploadFile() {
             </div>
             <h2 className="success-modal-title">Migration Successful!</h2>
             <p className="success-modal-desc">
-              Your application <strong>"CustomerPortal"</strong> has been successfully migrated from <strong>GCP (asia-east1)</strong> to <strong>AWS (us-east-1)</strong> with zero downtime.
+              Your application <strong>"CustomerPortal"</strong> has been successfully migrated from <strong>{sourceCloud} (asia-east1)</strong> to <strong>{targetCloud} (us-east-1)</strong> with zero downtime.
             </p>
             <div className="success-modal-actions">
               <button
@@ -417,7 +537,7 @@ async function uploadFile() {
           type="migration"
           details={{
             image: 'CustomerPortal',
-            provider: 'AWS',
+            provider: targetCloud,
             region: 'us-east-1',
             id: 'mig-live-42'
           }}
@@ -427,6 +547,57 @@ async function uploadFile() {
 
       <style dangerouslySetInnerHTML={{
         __html: `
+        .search-input::placeholder {
+          color: rgba(255,255,255,0.5);
+        }
+        .migration-cloud-select {
+          appearance: none;
+          -webkit-appearance: none;
+          background: rgba(15,23,42,0.6);
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.7)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 14px center;
+          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: 10px;
+          padding: 12px 40px 12px 16px;
+          color: #ffffff;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          outline: none;
+          transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .migration-cloud-select:focus {
+          border-color: rgba(99,102,241,0.5);
+          box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+        }
+        .migration-cloud-select option {
+          background: var(--bg-base);
+          color: var(--text-primary);
+        }
+        .migration-change-path-btn {
+          background: transparent;
+          border: 1px solid rgba(255,255,255,0.15);
+          color: #ffffff;
+          border-radius: 8px;
+          padding: 8px 16px;
+          font-size: 13px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: background 0.2s ease;
+        }
+        .migration-change-path-btn:hover {
+          background: rgba(255,255,255,0.05);
+        }
+        .migration-selection-panel,
+        .migration-diagram-panel,
+        .migration-diagram-wrap {
+          animation: migration-panel-fade 0.35s ease-out;
+        }
+        @keyframes migration-panel-fade {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
         .migration-travel-dot {
           position: absolute;
           width: 10px; height: 10px; border-radius: 50%;

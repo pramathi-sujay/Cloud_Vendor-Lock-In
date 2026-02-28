@@ -1,13 +1,19 @@
 import React from 'react';
 
+const DEMO_URL_BY_PROVIDER = {
+    aws: 'https://demo.opencart.com',
+    gcp: 'https://example.com',
+    azure: 'https://www.w3schools.com/w3css/tryw3css_templates_company.htm',
+};
+
 const MockPreview = ({ type, details, onClose }) => {
     const isDeployment = type === 'deployment';
     const id = details?.id || `skyport-${Date.now().toString(36)}`;
     const provider = details?.provider?.toUpperCase() || 'AWS';
     const region = details?.region || 'us-east-1';
     const image = details?.image || details?.container_image || 'nginx:latest';
-    const url = isDeployment
-        ? `https://yourapp.skyport.cloud/${id}`
+    const displayUrl = isDeployment
+        ? `https://dep-${id}.skyport.cloud`
         : `https://migrated-app.skyport.cloud/${id}`;
 
     return (
@@ -107,7 +113,7 @@ const MockPreview = ({ type, details, onClose }) => {
                 <div style={{ marginBottom: 20 }}>
                     <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>Application URL</div>
                     <a
-                        href={url}
+                        href={displayUrl}
                         target="_blank"
                         rel="noreferrer"
                         style={{
@@ -124,11 +130,16 @@ const MockPreview = ({ type, details, onClose }) => {
                         }}
                         onMouseEnter={e => { e.target.style.background = 'rgba(99,102,241,0.15)'; e.target.style.borderColor = 'rgba(99,102,241,0.4)'; }}
                         onMouseLeave={e => { e.target.style.background = 'rgba(99,102,241,0.08)'; e.target.style.borderColor = 'rgba(99,102,241,0.2)'; }}
+                        onClick={isDeployment ? (e) => {
+                            e.preventDefault();
+                            const demoUrl = DEMO_URL_BY_PROVIDER[details?.provider?.toLowerCase()] ?? DEMO_URL_BY_PROVIDER.aws;
+                            window.open(demoUrl, '_blank', 'noopener,noreferrer');
+                        } : undefined}
                     >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" />
                         </svg>
-                        {url}
+                        {displayUrl}
                     </a>
                 </div>
 

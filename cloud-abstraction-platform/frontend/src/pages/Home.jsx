@@ -42,45 +42,49 @@ const Home = ({ onPageChange }) => {
                 <div className="hero-bg-orb-1" />
                 <div className="hero-bg-orb-2" />
 
-                <div className="hero-content">
-                    <div className="hero-eyebrow animate-fade-in-up">
-                        <span>✨</span> SkyPort v2.0 Beta — Multi-Cloud Orchestration
+                <div className="hero-layout">
+                    <div className="hero-content">
+                        <div className="hero-eyebrow animate-fade-in-up">
+                            <span>✨</span> SkyPort v2.0 Beta — Multi-Cloud Orchestration
+                        </div>
+
+                        <h1 className="hero-headline animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+                            Control Your <span className="hero-headline-gradient">Multi-Cloud</span><br />
+                            Infrastructure from One SkyPort
+                        </h1>
+
+                        <p className="hero-subheading animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                            Deploy, monitor, migrate, and validate across AWS / GCP / Azure in real time.
+                            SkyPort abstracts cloud complexity into a single, professional control plane.
+                        </p>
+
+                        <div className="hero-ctas animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+                            <button className="btn-primary" onClick={() => onPageChange('DirectDeployment')}>
+                                Launch Deployment
+                            </button>
+                            <button className="btn-secondary" onClick={() => onPageChange('Monitoring')}>
+                                Open Monitoring
+                            </button>
+                        </div>
+
+                        <div className="hero-trust-badges animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+                            <div className="trust-badge">
+                                <span className="trust-aws">🟠 AWS</span> Amazon Web Services
+                            </div>
+                            <div className="trust-badge">
+                                <span className="trust-gcp">🔵 GCP</span> Google Cloud Platform
+                            </div>
+                            <div className="trust-badge">
+                                <span className="trust-azure">🔷 Azure</span> Microsoft Azure
+                            </div>
+                            <div className="trust-badge">
+                                <span className="pulse-green" style={{ width: 6, height: 6 }} />
+                                All Systems Operational
+                            </div>
+                        </div>
                     </div>
 
-                    <h1 className="hero-headline animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-                        Control Your <span className="hero-headline-gradient">Multi-Cloud</span><br />
-                        Infrastructure from One SkyPort
-                    </h1>
-
-                    <p className="hero-subheading animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                        Deploy, monitor, migrate, and validate across AWS / GCP / Azure in real time.
-                        SkyPort abstracts cloud complexity into a single, professional control plane.
-                    </p>
-
-                    <div className="hero-ctas animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-                        <button className="btn-primary" onClick={() => onPageChange('DirectDeployment')}>
-                            Launch Deployment
-                        </button>
-                        <button className="btn-secondary" onClick={() => onPageChange('Monitoring')}>
-                            Open Monitoring
-                        </button>
-                    </div>
-
-                    <div className="hero-trust-badges animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-                        <div className="trust-badge">
-                            <span className="trust-aws">🟠 AWS</span> Amazon Web Services
-                        </div>
-                        <div className="trust-badge">
-                            <span className="trust-gcp">🔵 GCP</span> Google Cloud Platform
-                        </div>
-                        <div className="trust-badge">
-                            <span className="trust-azure">🔷 Azure</span> Microsoft Azure
-                        </div>
-                        <div className="trust-badge">
-                            <span className="pulse-green" style={{ width: 6, height: 6 }} />
-                            All Systems Operational
-                        </div>
-                    </div>
+                    <div className="hero-diagram-panel" />
                 </div>
 
                 {/* Stats Preview */}
@@ -141,6 +145,22 @@ const Home = ({ onPageChange }) => {
 
             <style dangerouslySetInnerHTML={{
                 __html: `
+        .hero-layout {
+          display: grid;
+          grid-template-columns: 1fr minmax(280px, 400px);
+          gap: 48px;
+          align-items: center;
+        }
+        .hero-diagram-panel {
+          min-width: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        @media (max-width: 1024px) {
+          .hero-layout { grid-template-columns: 1fr; }
+          .hero-diagram-panel { max-width: 320px; margin: 0 auto; }
+        }
         .hero-stat-card {
           padding: 18px 24px;
           background: var(--bg-card);
