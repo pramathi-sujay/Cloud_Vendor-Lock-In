@@ -820,6 +820,10 @@ body {
   color: #4285f4;
 }
 
+.trust-azure {
+  color: #0089d6;
+}
+
 .hero-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -1355,6 +1359,12 @@ body {
   background: rgba(66, 133, 244, 0.12);
   border-color: rgba(66, 133, 244, 0.4);
   color: #4285f4;
+}
+
+.chip-azure.active {
+  background: rgba(0, 137, 214, 0.12);
+  border-color: rgba(0, 137, 214, 0.4);
+  color: #0089d6;
 }
 
 /* ── Quick Picks ─────────────────────────────────────────────────────────── */

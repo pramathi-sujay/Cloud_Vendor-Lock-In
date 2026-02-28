@@ -18,10 +18,10 @@ const BellIcon = () => (
 const PAGE_LABELS = {
   Home: { title: 'Overview', subtitle: 'Platform dashboard & quick actions', icon: '🏠', keywords: ['home', 'start', 'welcome'] },
   Dashboard: { title: 'Cloud Fleet Dashboard', subtitle: 'Real-time multi-cloud orchestration', icon: '📊', keywords: ['fleet', 'status', 'overview'] },
-  DirectDeployment: { title: 'Direct Deployment', subtitle: 'Deploy containers to AWS/GCP', icon: '🚀', keywords: ['aws', 'gcp', 'cloud', 'container', 'docker', 'deploy'] },
+  DirectDeployment: { title: 'Direct Deployment', subtitle: 'Deploy containers to AWS / GCP / Azure', icon: '🚀', keywords: ['aws', 'gcp', 'azure', 'cloud', 'container', 'docker', 'deploy'] },
   ActiveDeployments: { title: 'Active Deployments', subtitle: 'Manage running fleet instances', icon: '📦', keywords: ['running', 'manage', 'instances', 'active'] },
   Clusters: { title: 'Clusters', subtitle: 'Kubernetes & Resource groups', icon: '☸️', keywords: ['k8s', 'kubernetes', 'nodes', 'resource'] },
-  Migration: { title: 'Migration Engine', subtitle: 'AI-assisted cloud workload mapping', icon: '🔄', keywords: ['move', 'transfer', 'mapping', 'aws', 'gcp', 'cloud'] },
+  Migration: { title: 'Migration Engine', subtitle: 'AI-assisted cloud workload mapping', icon: '🔄', keywords: ['move', 'transfer', 'mapping', 'aws', 'gcp', 'azure', 'cloud'] },
   MigrationHistory: { title: 'Migration History', subtitle: 'Archive of past transfers', icon: '📜', keywords: ['logs', 'archive', 'past', 'history'] },
   Monitoring: { title: 'Testing & Monitoring', subtitle: 'Full observability & health validation', icon: '📈', keywords: ['health', 'stats', 'metrics', 'monitoring'] },
   Logs: { title: 'System Logs', subtitle: 'Real-time infrastructure events', icon: '📄', keywords: ['events', 'error', 'debug', 'history'] },

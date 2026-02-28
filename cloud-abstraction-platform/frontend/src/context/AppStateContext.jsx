@@ -5,6 +5,7 @@ const AppStateContext = createContext();
 const INITIAL_DEPLOYMENTS = [
     { id: 'dep-f3a1b2c4', provider: 'aws', container_image: 'nginx:latest', region: 'us-east-1', status: 'running', instanceType: 't3.medium', envVars: '', timestamp: Date.now() - 32000 },
     { id: 'dep-g8h7i6j5', provider: 'gcp', container_image: 'node:18-alpine', region: 'us-central1', status: 'running', instanceType: 'e2-medium', envVars: '', timestamp: Date.now() - 115000 },
+    { id: 'dep-a2b3c4d5', provider: 'azure', container_image: 'nginx:latest', region: 'eastus', status: 'running', instanceType: 'B2s', envVars: '', timestamp: Date.now() - 180000 },
     { id: 'dep-o9p8q7r6', provider: 'aws', container_image: 'python:3.11-slim', region: 'eu-west-1', status: 'running', instanceType: 't3.small', envVars: '', timestamp: Date.now() - 270000 },
     { id: 'dep-w1x2y3z4', provider: 'gcp', container_image: 'redis:7-alpine', region: 'europe-west1', status: 'failed', instanceType: 'e2-small', envVars: '', timestamp: Date.now() - 430000 },
     { id: 'dep-e9f8g7h6', provider: 'aws', container_image: 'ubuntu:22.04', region: 'ap-southeast-1', status: 'running', instanceType: 't3.micro', envVars: '', timestamp: Date.now() - 720000 },

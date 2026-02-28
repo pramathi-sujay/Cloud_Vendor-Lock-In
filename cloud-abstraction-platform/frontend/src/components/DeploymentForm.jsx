@@ -3,6 +3,7 @@ import api from '../services/api';
 
 const AWS_REGIONS = ['us-east-1', 'us-west-2', 'eu-west-1', 'ap-southeast-1'];
 const GCP_REGIONS = ['us-central1', 'us-east1', 'europe-west1', 'asia-east1'];
+const AZURE_REGIONS = ['eastus', 'westus2', 'westeurope', 'southeastasia'];
 const IMAGES = ['nginx:latest', 'node:18-alpine', 'python:3.11-slim', 'redis:7-alpine', 'ubuntu:22.04'];
 
 const RocketIcon = () => (
@@ -24,10 +25,10 @@ const DeploymentForm = ({ onDeploymentSuccess }) => {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
-    const regions = form.provider === 'gcp' ? GCP_REGIONS : AWS_REGIONS;
+    const regions = form.provider === 'gcp' ? GCP_REGIONS : form.provider === 'azure' ? AZURE_REGIONS : AWS_REGIONS;
 
     const setProvider = (p) => {
-        const r = (p === 'gcp' ? GCP_REGIONS : AWS_REGIONS)[0];
+        const r = p === 'gcp' ? GCP_REGIONS[0] : p === 'azure' ? AZURE_REGIONS[0] : AWS_REGIONS[0];
         setForm(f => ({ ...f, provider: p, region: r }));
     };
 
@@ -60,12 +61,13 @@ const DeploymentForm = ({ onDeploymentSuccess }) => {
                     >
                         <option value="aws">Amazon Web Services (AWS)</option>
                         <option value="gcp">Google Cloud Platform (GCP)</option>
-                        <option value="azure" disabled>Microsoft Azure — Coming Soon</option>
+                        <option value="azure">Microsoft Azure</option>
                     </select>
                 </div>
                 <div className="provider-chips">
                     <button type="button" className={`provider-chip chip-aws${form.provider === 'aws' ? ' active' : ''}`} onClick={() => setProvider('aws')}>AWS</button>
                     <button type="button" className={`provider-chip chip-gcp${form.provider === 'gcp' ? ' active' : ''}`} onClick={() => setProvider('gcp')}>GCP</button>
+                    <button type="button" className={`provider-chip chip-azure${form.provider === 'azure' ? ' active' : ''}`} onClick={() => setProvider('azure')}>Azure</button>
                 </div>
             </div>
 

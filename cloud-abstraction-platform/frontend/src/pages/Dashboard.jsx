@@ -40,7 +40,7 @@ const Dashboard = () => {
                     type="providers"
                     title="Cloud Providers"
                     value={providers}
-                    subtitle="AWS, GCP integration live"
+                    subtitle="AWS, GCP, Azure integration live"
                 />
                 <MetricCard
                     type="regions"

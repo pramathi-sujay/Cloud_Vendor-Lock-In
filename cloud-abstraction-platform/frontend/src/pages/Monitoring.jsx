@@ -102,6 +102,13 @@ const Monitoring = ({ onToast }) => {
                             </div>
                             <StatusBadge status="running" label="Connected" />
                         </div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <div style={{ width: 24, height: 24, borderRadius: 6, background: '#0089d6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 900 }}>A</div>
+                                <span style={{ fontSize: 14, fontWeight: 600 }}>Azure (eastus)</span>
+                            </div>
+                            <StatusBadge status="running" label="Connected" />
+                        </div>
                     </div>
                     <div style={{ marginTop: 20, fontSize: 11, color: 'var(--text-muted)', textAlign: 'center' }}>
                         Last heartbeat check: {lastCheck}

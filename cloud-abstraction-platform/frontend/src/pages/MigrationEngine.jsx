@@ -6,7 +6,7 @@ import { useAppState } from '../context/AppStateContext';
 const MIGRATION_STEPS = [
   { id: 1, label: 'Upload', desc: 'Analyzing source configs' },
   { id: 2, label: 'Analysis', desc: 'Mapping cloud services' },
-  { id: 3, label: 'Plan', desc: 'Generating AWS template' },
+  { id: 3, label: 'Plan', desc: 'Generating AWS/Azure template' },
   { id: 4, label: 'Transform', desc: 'Applying AI code patches' },
   { id: 5, label: 'Execute', desc: 'Provisioning & Cutover' }
 ];
@@ -179,13 +179,15 @@ const MigrationEngine = () => {
               <div style={{ marginBottom: 20 }}>
                 <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Detected Provider:</div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: '#4285F4' }}>Google Cloud Platform (GCP)</div>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>Targets: AWS, Azure</div>
               </div>
 
               <div style={{ marginBottom: 20 }}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 8 }}>Services</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingLeft: 12, borderLeft: '2px solid var(--border)' }}>
-                  <div style={{ fontSize: 12, color: 'var(--text-primary)' }}>• Cloud Storage (3 references)</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-primary)' }}>• Firestore (2 references)</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-primary)' }}>• Cloud Storage (3 references) → S3 / Blob Storage</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-primary)' }}>• Firestore (2 references) → DynamoDB / Cosmos DB</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-primary)' }}>• Pub/Sub (1 reference) → SNS/SQS / Service Bus</div>
                 </div>
               </div>
 
@@ -212,7 +214,7 @@ const MigrationEngine = () => {
           {currentStep === 3 && (
             <div className="glass-card-nohover animate-fade-in-up">
               <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 4, color: 'var(--text-primary)' }}>Migration Plan</h3>
-              <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 20 }}>Target Cloud: Amazon Web Services (AWS)</p>
+              <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 20 }}>Target Cloud: Amazon Web Services (AWS) / Microsoft Azure</p>
 
               <div className="table-wrap" style={{ marginBottom: 24 }}>
                 <table className="data-table">
@@ -220,6 +222,7 @@ const MigrationEngine = () => {
                     <tr>
                       <th>GCP Service</th>
                       <th>AWS Equivalent</th>
+                      <th>Azure Equivalent</th>
                       <th>Complexity</th>
                     </tr>
                   </thead>
@@ -227,11 +230,19 @@ const MigrationEngine = () => {
                     <tr>
                       <td style={{ fontSize: 12 }}>Cloud Storage</td>
                       <td style={{ fontSize: 12 }}>S3</td>
+                      <td style={{ fontSize: 12 }}>Blob Storage</td>
                       <td><span style={{ color: 'var(--status-green)', fontSize: 11, fontWeight: 700 }}>Low</span></td>
                     </tr>
                     <tr>
                       <td style={{ fontSize: 12 }}>Firestore</td>
                       <td style={{ fontSize: 12 }}>DynamoDB</td>
+                      <td style={{ fontSize: 12 }}>Cosmos DB</td>
+                      <td><span style={{ color: 'var(--status-yellow)', fontSize: 11, fontWeight: 700 }}>Medium</span></td>
+                    </tr>
+                    <tr>
+                      <td style={{ fontSize: 12 }}>Pub/Sub</td>
+                      <td style={{ fontSize: 12 }}>SNS/SQS</td>
+                      <td style={{ fontSize: 12 }}>Service Bus</td>
                       <td><span style={{ color: 'var(--status-yellow)', fontSize: 11, fontWeight: 700 }}>Medium</span></td>
                     </tr>
                   </tbody>
@@ -259,7 +270,7 @@ const MigrationEngine = () => {
           {currentStep === 4 && (
             <div className="glass-card-nohover animate-fade-in-up" style={{ width: '100%' }}>
               <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 8, color: 'var(--text-primary)' }}>Code Transformation Preview</h3>
-              <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 20 }}>AI-generated AWS equivalent based on detected GCP services.</p>
+              <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 20 }}>AI-generated AWS/Azure equivalent based on detected GCP services.</p>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
                 <div>

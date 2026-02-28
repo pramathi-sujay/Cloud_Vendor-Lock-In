@@ -3,7 +3,7 @@ import React from 'react';
 const FEATURE_CARDS = [
     {
         title: 'Direct Multi-Cloud Deployment',
-        desc: 'Launch containers instantly across AWS and GCP from a single unified interface.',
+        desc: 'Launch containers instantly across AWS, GCP, and Azure from a single unified interface.',
         icon: '🚀'
     },
     {
@@ -53,7 +53,7 @@ const Home = ({ onPageChange }) => {
                     </h1>
 
                     <p className="hero-subheading animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                        Deploy, monitor, migrate, and validate across AWS & GCP in real time.
+                        Deploy, monitor, migrate, and validate across AWS / GCP / Azure in real time.
                         SkyPort abstracts cloud complexity into a single, professional control plane.
                     </p>
 
@@ -74,6 +74,9 @@ const Home = ({ onPageChange }) => {
                             <span className="trust-gcp">🔵 GCP</span> Google Cloud Platform
                         </div>
                         <div className="trust-badge">
+                            <span className="trust-azure">🔷 Azure</span> Microsoft Azure
+                        </div>
+                        <div className="trust-badge">
                             <span className="pulse-green" style={{ width: 6, height: 6 }} />
                             All Systems Operational
                         </div>
@@ -84,7 +87,7 @@ const Home = ({ onPageChange }) => {
                 <div className="hero-stats animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
                     {[
                         { label: 'Avg Uptime SLA', value: '99.97%' },
-                        { label: 'Cloud Providers', value: '2' },
+                        { label: 'Cloud Providers', value: '3' },
                         { label: 'Avg Deploy Latency', value: '<120ms' },
                         { label: 'Global Regions', value: '6+' },
                     ].map((s, i) => (
